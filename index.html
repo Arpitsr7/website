@@ -70,6 +70,17 @@ cursor:pointer;
 margin-top:10px;
 }
 
+.cart{
+background:white;
+padding:40px;
+text-align:center;
+}
+
+#cartItems{
+margin:20px;
+font-size:18px;
+}
+
 .contact{
 background:white;
 padding:40px;
@@ -115,41 +126,53 @@ Discover beautiful ethnic suits designed with elegance and comfort.
 
 <div class="product">
 
-<img src="https://images.unsplash.com/photo-1618354691438-25bc04584c23">
+<img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c">
 
-<h3>Designer Suit</h3>
+<h3>Pink Designer Suit</h3>
 
-<p>Premium cotton ethnic suit</p>
+<p>₹2500</p>
 
-<button>Order</button>
-
-</div>
-
-<div class="product">
-
-<img src="https://images.unsplash.com/photo-1593032465175-481ac7f401a0">
-
-<h3>Festive Suit</h3>
-
-<p>Perfect for festivals</p>
-
-<button>Order</button>
+<button onclick="addToCart('Pink Designer Suit',2500)">Add to Cart</button>
 
 </div>
 
 <div class="product">
 
-<img src="https://images.unsplash.com/photo-1602810318660-d2c46b750f1d">
+<img src="https://images.unsplash.com/photo-1583391733956-6c78276477e1">
 
-<h3>Casual Suit</h3>
+<h3>Wedding Special Suit</h3>
 
-<p>Comfortable daily wear</p>
+<p>₹4200</p>
 
-<button>Order</button>
+<button onclick="addToCart('Wedding Special Suit',4200)">Add to Cart</button>
+
+</div>
+
+<div class="product">
+
+<img src="https://images.unsplash.com/photo-1610030469668-8e02f5d2a3c5">
+
+<h3>Casual Cotton Suit</h3>
+
+<p>₹1800</p>
+
+<button onclick="addToCart('Casual Cotton Suit',1800)">Add to Cart</button>
 
 </div>
 
 </section>
+
+
+<section class="cart">
+
+<h2>Your Cart</h2>
+
+<div id="cartItems"></div>
+
+<button onclick="placeOrder()">Place Order</button>
+
+</section>
+
 
 <section class="contact">
 
@@ -164,11 +187,13 @@ Discover beautiful ethnic suits designed with elegance and comfort.
 
 </section>
 
+
 <footer>
 
 © 2026 Shobha Clothing Brand
 
 </footer>
+
 
 <script>
 
@@ -176,6 +201,59 @@ const supabase = window.supabase.createClient(
 "https://vgptvajelcoznccmrvfr.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZncHR2YWplbGNvem5jY21ydmZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMDA4MzUsImV4cCI6MjA4ODg3NjgzNX0.j-CYar3faNPOMwTc3Hl2Xn2FzQXQ7z1GcrsVMxQ2i5k"
 )
+
+let cart=[]
+
+function addToCart(product,price){
+
+cart.push({product,price})
+
+displayCart()
+
+}
+
+function displayCart(){
+
+let cartHTML=""
+
+cart.forEach(item=>{
+
+cartHTML+=`<p>${item.product} - ₹${item.price}</p>`
+
+})
+
+document.getElementById("cartItems").innerHTML=cartHTML
+
+}
+
+async function placeOrder(){
+
+if(cart.length===0){
+alert("Cart is empty")
+return
+}
+
+const customerName=prompt("Enter your name")
+
+for(let item of cart){
+
+await supabase
+.from("orders")
+.insert([{
+name:customerName,
+product:item.product,
+price:item.price
+}])
+
+}
+
+alert("Order placed successfully!")
+
+cart=[]
+
+displayCart()
+
+}
 
 async function saveContact(){
 
